@@ -27,20 +27,27 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y git zip unzip autoconf automake libtool pkg-config zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev libsqlite3-dev sqlite3 bzip2 libbz2-dev
-        pip install --user --upgrade buildozer cython
+        pip install --user --upgrade buildozer cython pexpect
 
-    - name: Clean Cache and Force Legacy Android SDK Setup
+    - name: Clean Cache and Setup Executable SDK Tools
       run: |
-        # အမှားဖြစ်စေသော cache များကို ထပ်မံရှင်းလင်းခြင်း
+        # cache ဟောင်းများကို သန့်ရှင်းရေးလုပ်ခြင်း
         rm -rf ~/.buildozer
         rm -rf .buildozer/
         
-        # Buildozer သုံးမည့် စနစ်ဟောင်း SDK ရဲ့ လမ်းကြောင်းပုံစံကို ကြိုတင်ဖန်တီးခြင်း
+        # လမ်းကြောင်းများ ကြိုတင်တည်ဆောက်ခြင်း
         mkdir -p ~/.buildozer/android/platform/android-sdk/tools/bin
         mkdir -p ~/.buildozer/android/platform/android-sdk/licenses
-        
-        # စနစ်ဟောင်းအတွက် sdkmanager ဖိုင်အတုတစ်ခု ဖန်တီးပေးခြင်း (ဒေါင်းလုဒ်မချို့ယွင်းစေရန်)
-        touch ~/.buildozer/android/platform/android-sdk/tools/bin/sdkmanager
+
+        # Exec format error မတက်စေရန် စစ်မှန်သော sdkmanager executable wrapper script တစ်ခုကို ဖန်တီးပေးခြင်း
+        cat << 'EOF' > ~/.buildozer/android/platform/android-sdk/tools/bin/sdkmanager
+#!/bin/bash
+if [ -x "/usr/local/lib/android/sdk/cmdline-tools/latest/bin/sdkmanager" ]; then
+    /usr/local/lib/android/sdk/cmdline-tools/latest/bin/sdkmanager "$@"
+else
+    yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "$@"
+fi
+EOF
         chmod +x ~/.buildozer/android/platform/android-sdk/tools/bin/sdkmanager
 
         # လိုင်စင်များ ကြိုတင်ထည့်သွင်းခြင်း
