@@ -15,23 +15,20 @@ jobs:
     - name: Set up Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '20' # ခေတ်မီ Capacitor အတွက် Node 20 ကို သုံးခြင်း
+        node-version: '20'
 
     - name: Set up JDK 17
       uses: actions/setup-java@v4
       with:
         distribution: 'temurin'
-        java-version: '17' # Android SDK အတွက် စိတ်အချရဆုံး Java ဗားရှင်း
+        java-version: '17'
 
     - name: Install Dependencies
       run: |
         npm install
-        # အကယ်၍ Web app ကို build လုပ်ရမည့် script (ဥပမာ npm run build) ရှိပါက အောက်က # ကို ဖြုတ်ပေးပါ
-        # npm run build 
 
     - name: Sync Capacitor to Android
       run: |
-        npx cap json
         npx cap sync android
 
     - name: Build Android App (Gradle)
