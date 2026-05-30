@@ -52,5 +52,5 @@ jobs:
     - name: Upload Signed APK Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: UBT-Shop-Official-APK
+        name: KM-Shop-Official-APK
         path: ${{ steps.sign_app.outputs.signedReleaseFile }}
