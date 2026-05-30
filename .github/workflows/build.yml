@@ -23,11 +23,16 @@ jobs:
         sudo apt-get install -y git zip unzip autoconf automake libtool pkg-config zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev libsqlite3-dev sqlite3 bzip2 libbz2-dev openjdk-17-jdk
         pip install --user --upgrade buildozer cython
 
-    - name: Accept Android SDK Licenses
+    - name: Pre-accept Buildozer Android Licenses
       run: |
-        mkdir -p ~/.android
-        touch ~/.android/repositories.cfg
-        yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
+        # Buildozer ရဲ့ Android SDK licenses တည်ဆောက်မည့် လမ်းကြောင်းကို ကြိုတင်ဖန်တီးခြင်း
+        mkdir -p ~/.buildozer/android/platform/android-sdk/licenses
+        
+        # အဓိက လိုအပ်သော android-sdk-license hash ကို တိုက်ရိုက် ထည့်သွင်းခြင်း
+        echo -e "\n8933bad161ad75d1d64353318097502d4cc5c08d\n24333f8a63b6825ea51551be33c004de2d8d3412\nd56f5187479451eabf01fb74313026e22e41e3d3" > ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
+        
+        # preview license အတွက်ပါ ကြိုတင်ထည့်သွင်းခြင်း
+        echo -e "\n84831b9409646a918e30573bab4c9c91346d8abd" > ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-preview-license
 
     - name: Build with Buildozer
       run: |
