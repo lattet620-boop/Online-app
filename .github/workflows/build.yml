@@ -12,6 +12,12 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v4
 
+    - name: Set up JDK 11 (Legacy SDK handling)
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '11'
+
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
@@ -20,7 +26,7 @@ jobs:
     - name: Install Buildozer and Dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y git zip unzip autoconf automake libtool pkg-config zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev libsqlite3-dev sqlite3 bzip2 libbz2-dev openjdk-11-jdk
+        sudo apt-get install -y git zip unzip autoconf automake libtool pkg-config zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev libsqlite3-dev sqlite3 bzip2 libbz2-dev
         pip install --user --upgrade buildozer cython
 
     - name: Setup Tweak for Android SDK Licenses (Legacy)
