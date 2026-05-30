@@ -17,4 +17,7 @@ android.accept_sdk_license = 1
 # SDK settings ကို ပုံမှန် အရင်အတိုင်း ပြန်ထားခြင်း
 android.api = 31
 android.minapi = 21
+# --- ဒီစာကြောင်း (၃) ကြောင်းကို ကွက်တိ ဖြည့်စွက်ပေးပါ ဆရာ ---
+android.ndk = 23b
 android.build_tools_version = 31.0.0
+android.accept_sdk_license = 1
