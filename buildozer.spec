@@ -13,9 +13,10 @@ fullscreen = 1
 android.archs = armeabi-v7a, arm64-v8a
 android.permissions = INTERNET
 
-# SDK Settings (ဗားရှင်းဟောင်း တည်ငြိမ်သော ဆက်တင်များ)
+# SDK settings (GitHub standard လမ်းကြောင်းများကို တိုက်ရိုက် ညွှန်ပြခြင်း)
 android.api = 31
 android.minapi = 21
-android.ndk = 23b
+android.sdk_path = /usr/local/lib/android/sdk
+android.ndk_path = /usr/local/lib/android/sdk/ndk/25.2.9519653
 android.build_tools_version = 31.0.0
 android.accept_sdk_license = 1
