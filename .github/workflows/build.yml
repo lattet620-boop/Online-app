@@ -12,11 +12,11 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v4
 
-    - name: Set up JDK 11 (Legacy SDK handling)
+    - name: Set up JDK 17 (Required for modern SDK Manager)
       uses: actions/setup-java@v4
       with:
         distribution: 'temurin'
-        java-version: '11'
+        java-version: '17'
 
     - name: Set up Python
       uses: actions/setup-python@v5
@@ -40,7 +40,6 @@ jobs:
         mkdir -p ~/.buildozer/android/platform/android-sdk/licenses
 
         # GitHub ထဲတွင် အသင့်ရှိသော တရားဝင် sdkmanager ဆီသို့ တိုက်ရိုက် Link ချိတ်ပေးခြင်း
-        # ၎င်းသည် Exec format error နှင့် YAML syntax error ကို လုံးဝကျော်လွှားနိုင်သည်
         ln -sf /usr/local/lib/android/sdk/cmdline-tools/latest/bin/sdkmanager ~/.buildozer/android/platform/android-sdk/tools/bin/sdkmanager
 
         # လိုင်စင်များ ကြိုတင်ထည့်သွင်းခြင်း
