@@ -1,4 +1,4 @@
-name: Build Android APK
+name: Build Android APK (Capacitor)
 
 on:
   push:
@@ -12,36 +12,34 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v4
 
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20' # ခေတ်မီ Capacitor အတွက် Node 20 ကို သုံးခြင်း
+
     - name: Set up JDK 17
       uses: actions/setup-java@v4
       with:
         distribution: 'temurin'
-        java-version: '17'
+        java-version: '17' # Android SDK အတွက် စိတ်အချရဆုံး Java ဗားရှင်း
 
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.10'
-
-    - name: Install Buildozer and Dependencies
+    - name: Install Dependencies
       run: |
-        sudo apt-get update
-        sudo apt-get install -y git zip unzip autoconf automake libtool pkg-config zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev libsqlite3-dev sqlite3 bzip2 libbz2-dev
-        pip install --user --upgrade buildozer cython
+        npm install
+        # အကယ်၍ Web app ကို build လုပ်ရမည့် script (ဥပမာ npm run build) ရှိပါက အောက်က # ကို ဖြုတ်ပေးပါ
+        # npm run build 
 
-    - name: Pre-accept Android SDK Licenses
+    - name: Sync Capacitor to Android
       run: |
-        # GitHub Actions စနစ်ထဲတွင် ရှိပြီးသား Android SDK ရဲ့ လိုင်စင်အားလုံးကို အလိုအလျောက် သဘောတူညီပေးခြင်း
-        yes | /usr/local/lib/android/sdk/cmdline-tools/latest/bin/sdkmanager --licenses
+        npx cap json
+        npx cap sync android
 
-    - name: Build with Buildozer
+    - name: Build Android App (Gradle)
       run: |
-        buildozer android debug
-      env:
-        ACCEPT_SDK_LICENSE: "y"
+        cd android && ./gradlew assembleDebug
 
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: UBT-Shop-APK
-        path: bin/*.apk
+        name: UBT-Shop-Capacitor-APK
+        path: android/app/build/outputs/apk/debug/app-debug.apk
