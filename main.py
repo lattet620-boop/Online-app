@@ -15,7 +15,7 @@ class WebViewWidget(BoxLayout):
         self.webview.setWebViewClient(WebViewClient())
         
         # ဆရာ့ရဲ့ GitHub Public Link ကို ဒီနေရာမှာ ထည့်ပေးပါ
-        self.webview.loadUrl('https://yourusername.github.io/my-shop/') 
+        self.webview.loadUrl('https://lattet620-boop.github.io/Online-app/') 
         
         Activity.setContentView(self.webview)
 
