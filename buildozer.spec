@@ -14,9 +14,7 @@ android.archs = armeabi-v7a, arm64-v8a
 android.permissions = INTERNET
 android.accept_sdk_license = 1
 
-# --- ဒီအပိုင်းကို အသစ်တိုးပြီး ဖြည့်စွက်ပေးထားပါတယ် ဆရာ ---
-android.api = 34
+# SDK settings ကို ပုံမှန် အရင်အတိုင်း ပြန်ထားခြင်း
+android.api = 31
 android.minapi = 21
-android.build_tools_version = 34.0.0
-android.sdk_path = /usr/local/lib/android/sdk
-android.ndk_path = /usr/local/lib/android/sdk/ndk/27.3.13750724
+android.build_tools_version = 31.0.0
