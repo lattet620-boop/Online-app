@@ -23,9 +23,11 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
 
-    - name: Install Dependencies
+    - name: Install Dependencies and Add Android Platform
       run: |
         npm install
+        # GitHub Runner ပေါ်တွင် android platform ကို အလိုအလျောက် ကြိုတင်ဆောက်ခိုင်းခြင်း
+        npx cap add android
 
     - name: Sync Capacitor to Android
       run: |
