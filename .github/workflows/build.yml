@@ -29,26 +29,19 @@ jobs:
         sudo apt-get install -y git zip unzip autoconf automake libtool pkg-config zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev libsqlite3-dev sqlite3 bzip2 libbz2-dev
         pip install --user --upgrade buildozer cython pexpect
 
-    - name: Clean Cache and Setup Executable SDK Tools
+    - name: Clean Cache and Bypass SDKManager Link
       run: |
         # cache ဟောင်းများကို သန့်ရှင်းရေးလုပ်ခြင်း
         rm -rf ~/.buildozer
         rm -rf .buildozer/
         
-        # လမ်းကြောင်းများ ကြိုတင်တည်ဆောက်ခြင်း
+        # Buildozer ရှာမည့် SDK လမ်းကြောင်းပုံစံကို ကြိုတင်ဖန်တီးခြင်း
         mkdir -p ~/.buildozer/android/platform/android-sdk/tools/bin
         mkdir -p ~/.buildozer/android/platform/android-sdk/licenses
 
-        # Exec format error မတက်စေရန် စစ်မှန်သော sdkmanager executable wrapper script တစ်ခုကို ဖန်တီးပေးခြင်း
-        cat << 'EOF' > ~/.buildozer/android/platform/android-sdk/tools/bin/sdkmanager
-#!/bin/bash
-if [ -x "/usr/local/lib/android/sdk/cmdline-tools/latest/bin/sdkmanager" ]; then
-    /usr/local/lib/android/sdk/cmdline-tools/latest/bin/sdkmanager "$@"
-else
-    yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "$@"
-fi
-EOF
-        chmod +x ~/.buildozer/android/platform/android-sdk/tools/bin/sdkmanager
+        # GitHub ထဲတွင် အသင့်ရှိသော တရားဝင် sdkmanager ဆီသို့ တိုက်ရိုက် Link ချိတ်ပေးခြင်း
+        # ၎င်းသည် Exec format error နှင့် YAML syntax error ကို လုံးဝကျော်လွှားနိုင်သည်
+        ln -sf /usr/local/lib/android/sdk/cmdline-tools/latest/bin/sdkmanager ~/.buildozer/android/platform/android-sdk/tools/bin/sdkmanager
 
         # လိုင်စင်များ ကြိုတင်ထည့်သွင်းခြင်း
         echo -e "24333f8a63b6825ea51551be33c004de2d8d3412\nd56f5187479451eabf01fb74313026e22e41e3d3\n8933bad161ad75d1d64353318097502d4cc5c08d" > ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
