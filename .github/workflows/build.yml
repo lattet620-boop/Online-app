@@ -12,7 +12,7 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v4
 
-    - name: Set up JDK 17 (Required for modern SDK Manager)
+    - name: Set up JDK 17
       uses: actions/setup-java@v4
       with:
         distribution: 'temurin'
@@ -27,24 +27,12 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y git zip unzip autoconf automake libtool pkg-config zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev libsqlite3-dev sqlite3 bzip2 libbz2-dev
-        pip install --user --upgrade buildozer cython pexpect
+        pip install --user --upgrade buildozer cython
 
-    - name: Clean Cache and Bypass SDKManager Link
+    - name: Pre-accept Android SDK Licenses
       run: |
-        # cache ဟောင်းများကို သန့်ရှင်းရေးလုပ်ခြင်း
-        rm -rf ~/.buildozer
-        rm -rf .buildozer/
-        
-        # Buildozer ရှာမည့် SDK လမ်းကြောင်းပုံစံကို ကြိုတင်ဖန်တီးခြင်း
-        mkdir -p ~/.buildozer/android/platform/android-sdk/tools/bin
-        mkdir -p ~/.buildozer/android/platform/android-sdk/licenses
-
-        # GitHub ထဲတွင် အသင့်ရှိသော တရားဝင် sdkmanager ဆီသို့ တိုက်ရိုက် Link ချိတ်ပေးခြင်း
-        ln -sf /usr/local/lib/android/sdk/cmdline-tools/latest/bin/sdkmanager ~/.buildozer/android/platform/android-sdk/tools/bin/sdkmanager
-
-        # လိုင်စင်များ ကြိုတင်ထည့်သွင်းခြင်း
-        echo -e "24333f8a63b6825ea51551be33c004de2d8d3412\nd56f5187479451eabf01fb74313026e22e41e3d3\n8933bad161ad75d1d64353318097502d4cc5c08d" > ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
-        echo -e "84831b9409646a918e30573bab4c9c91346d8abd" > ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-preview-license
+        # GitHub Actions စနစ်ထဲတွင် ရှိပြီးသား Android SDK ရဲ့ လိုင်စင်အားလုံးကို အလိုအလျောက် သဘောတူညီပေးခြင်း
+        yes | /usr/local/lib/android/sdk/cmdline-tools/latest/bin/sdkmanager --licenses
 
     - name: Build with Buildozer
       run: |
