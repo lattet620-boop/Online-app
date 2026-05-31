@@ -26,14 +26,14 @@ jobs:
       - name: Initialize and Build Android
         run: |
           # Project ကို www directory နဲ့ စတင်ခြင်း
-          npx cap init MyApp com.kingeraser.myapp --web-dir www
+          npx cap init KM com.kingeraser.myapp --web-dir www
           npx cap add android
           
           # Webview နှင့် Network Cleartext Traffic ခွင့်ပြုခြင်း
           sed -i 's/android:usesCleartextTraffic="false"/android:usesCleartextTraffic="true"/' android/app/src/main/AndroidManifest.xml
           
           # Capacitor Configuration ပြင်ဆင်ခြင်း
-          echo '{"appId": "com.kingeraser.myapp", "appName": "MyApp", "webDir": "www", "server": {"allowNavigation": ["*"], "cleartext": true}}' > capacitor.config.json
+          echo '{"appId": "com.kingeraser.myapp", "appName": "KM", "webDir": "www", "server": {"allowNavigation": ["*"], "cleartext": true}}' > capacitor.config.json
 
           export JAVA_HOME=$JAVA_HOME_21_X64
           npx cap sync android
@@ -57,7 +57,7 @@ jobs:
           ORIGINAL_APK=$(find android/app/build/outputs/apk/release/ -name "*.apk" | head -n 1)
           
           # ၄။ Zipalign ပြုလုပ်ခြင်း
-          $BUILD_TOOLS_PATH/zipalign -v 4 "$ORIGINAL_APK" my-final-app.apk
+          $BUILD_TOOLS_PATH/zipalign -v 4 "$ORIGINAL_APK" KEEC13-km-app.apk
           
           # ၅။ Play Store စံနှုန်းမီ V1, V2, V3 Schemes များဖြင့် လက်မှတ်ထိုးခြင်း
           # ဒါမှသာ ဖုန်းမှာ Install လုပ်တဲ့အခါ Scan ဖတ်ဖို့ တောင်းဆိုမှာဖြစ်ပါတယ်
@@ -67,12 +67,12 @@ jobs:
             --v1-signing-enabled true \
             --v2-signing-enabled true \
             --v3-signing-enabled true \
-            my-final-app.apk
+            KEEC13-km-app.apk
           
           echo "✅ Official Signed APK with V2/V3 schemes created!"
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: My-Official-Signed-APK
-          path: my-final-app.apk
+          name: KEEC13-KM-Signed-APK
+          path: KEEC13-km-app.apk
