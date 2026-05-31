@@ -1,4 +1,4 @@
-name: HTML to APK (Final Success)
+name: HTML to APK (Final Success with Signing)
 on: [push]
 
 jobs:
@@ -18,7 +18,8 @@ jobs:
         run: |
           mkdir -p www
           cp -r ./* www/ || true
-          rm -rf www/.github
+          # ပိုလျှံသော Folder များကို ရှင်းလင်းခြင်း
+          rm -rf www/.github www/android www/www || true
           npm install -g @ionic/cli
           npm install @capacitor/core @capacitor/cli @capacitor/android
 
@@ -28,22 +29,50 @@ jobs:
           npx cap init MyApp com.kingeraser.myapp --web-dir www
           npx cap add android
           
-          # Webview Settings ပြင်ဆင်ခြင်း
+          # Webview နှင့် Network Cleartext Traffic ခွင့်ပြုခြင်း
           sed -i 's/android:usesCleartextTraffic="false"/android:usesCleartextTraffic="true"/' android/app/src/main/AndroidManifest.xml
           
-          # Local file access config ထည့်ခြင်း
+          # Capacitor Configuration ပြင်ဆင်ခြင်း
           echo '{"appId": "com.kingeraser.myapp", "appName": "MyApp", "webDir": "www", "server": {"allowNavigation": ["*"], "cleartext": true}}' > capacitor.config.json
 
           export JAVA_HOME=$JAVA_HOME_21_X64
           npx cap sync android
-          cd android && ./gradlew assembleDebug
+          
+          # Play Protect Scan ဖတ်နိုင်ရန် Release Mode ဖြင့် တည်ဆောက်ခြင်း
+          cd android && ./gradlew assembleRelease
 
-      - name: Export APK
+      - name: Sign Android APK with Keystore
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
         run: |
-          cp android/app/build/outputs/apk/debug/app-debug.apk ./my-final-app.apk
+          # ၁။ Keystore ဖိုင်ကို ပြန်လည်ထုတ်ယူခြင်း
+          echo "$KEYSTORE_BASE64" | base64 --decode > release.jks
+          
+          # ၂။ Build Tools လမ်းကြောင်းကို Dynamic ရှာဖွေခြင်း (Error #11 ကို ဖြေရှင်းရန်)
+          BUILD_TOOLS_PATH=$(ls -d $ANDROID_HOME/build-tools/* | tail -1)
+          
+          # ၃။ Gradle က ထုတ်ပေးလိုက်သော မူရင်း APK ကို ရှာဖွေခြင်း
+          ORIGINAL_APK=$(find android/app/build/outputs/apk/release/ -name "*.apk" | head -n 1)
+          
+          # ၄။ Zipalign ပြုလုပ်ခြင်း
+          $BUILD_TOOLS_PATH/zipalign -v 4 "$ORIGINAL_APK" my-final-app.apk
+          
+          # ၅။ Play Store စံနှုန်းမီ V1, V2, V3 Schemes များဖြင့် လက်မှတ်ထိုးခြင်း
+          # ဒါမှသာ ဖုန်းမှာ Install လုပ်တဲ့အခါ Scan ဖတ်ဖို့ တောင်းဆိုမှာဖြစ်ပါတယ်
+          $BUILD_TOOLS_PATH/apksigner sign --ks release.jks \
+            --ks-pass pass:"$KEYSTORE_PASSWORD" \
+            --ks-key-alias "$KEY_ALIAS" \
+            --v1-signing-enabled true \
+            --v2-signing-enabled true \
+            --v3-signing-enabled true \
+            my-final-app.apk
+          
+          echo "✅ Official Signed APK with V2/V3 schemes created!"
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: My-HTML-App-APK
+          name: My-Official-Signed-APK
           path: my-final-app.apk
